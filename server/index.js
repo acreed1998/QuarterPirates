@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const db = require('../database/index');
+require('dotenv').config();
 
 // const helper = require('../helpers/apiHelpers');
 
