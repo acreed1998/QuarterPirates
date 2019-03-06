@@ -1,0 +1,30 @@
+{
+  "name": "quarterpirates",
+  "version": "1.0.0",
+  "description": "The Pirate Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zantec/QuarterPirates.git"
+  },
+  "keywords": [
+    "Pirates"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zantec/QuarterPirates/issues"
+  },
+  "homepage": "https://github.com/zantec/QuarterPirates#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "mysql": "^2.16.0",
+    "path": "^0.12.7"
+  }
+}
