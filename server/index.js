@@ -11,6 +11,7 @@ const fs = require('fs');
 const _ = require('lodash');
 const db = require('../database/index');
 require('dotenv').config();
+require('../TestFunctions');
 
 // const helper = require('../helpers/apiHelpers');
 
