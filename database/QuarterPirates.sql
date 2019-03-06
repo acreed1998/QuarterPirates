@@ -49,21 +49,21 @@ CREATE TABLE Treasures(
 
 CREATE TABLE UserRiddles(
   id INTEGER AUTO_INCREMENT NOT NULL,
-  iduser INTEGER NOT NULL,
-  idriddle INTEGER NOT NULL,
+  id_user INTEGER NOT NULL,
+  id_riddle INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE UserTreasures(
   id INTEGER AUTO_INCREMENT NOT NULL,
-  iduser INTEGER NOT NULL,
-  idtreasure INTEGER NOT NULL,
+  id_user INTEGER NOT NULL,
+  id_treasure INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE TreasureRiddles(
   id INTEGER AUTO_INCREMENT NOT NULL,
-  idtreasure INTEGER NOT NULL,
-  idriddle INTEGER NOT NULL,
+  id_treasure INTEGER NOT NULL,
+  id_riddle INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
