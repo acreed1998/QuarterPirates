@@ -28,6 +28,7 @@ CREATE TABLE Riddles (
   time_created INTEGER NOT NULL,
   views INTEGER NOT NULL DEFAULT 0,
   riddle TEXT NOT NULL,
+  id_treasure INTEGER DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
@@ -67,3 +68,5 @@ CREATE TABLE TreasureRiddles(
   id_riddle INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
+
+ALTER TABLE Riddles ADD FOREIGN KEY (id_treasure) REFERENCES Treasures (id);
