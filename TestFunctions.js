@@ -5,4 +5,7 @@ const db = require('./database/index');
 //   console.log(res);
 // })
 
-
+// db.insertUser('austin', 'reed');
+db.selectUserByUsername('austin1', (err, user) => {
+  console.log(err, user);
+});
