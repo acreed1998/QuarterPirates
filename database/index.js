@@ -67,13 +67,21 @@ module.exports.selectAllUsers = (callback) => {
 };
 
 module.exports.selectUserByUsername = (username, callback) => {
-  connection.query(`SELECT * FROM Users WHERE username = '${username}'`, (err, user) => {
+  connection.query(`SELECT * FROM Users WHERE username = '${username}'`, (err, singleUserArray) => {
     if (err) {
       callback(err, null);
     } else {
-      callback(null, user);
+      callback(null, singleUserArray[0]);
     }
   })
 };
 
-
+module.exports.selectUserById = (id_user, callback) => {
+  connection.query(`SELECT * FROM Users WHERE id = ${id_user}`, (err, singleUserArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleUserArray[0]);
+    }
+  })
+};

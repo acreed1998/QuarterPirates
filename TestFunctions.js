@@ -6,6 +6,11 @@ const db = require('./database/index');
 // })
 
 // db.insertUser('austin', 'reed');
-db.selectUserByUsername('austin1', (err, user) => {
-  console.log(err, user);
-});
+
+// db.selectUserByUsername('austin', (err, user) => {
+//   console.log(err, user);
+// });
+
+// db.selectUserById(1, (err, user) => {
+//   console.log(err, user);
+// });
