@@ -212,3 +212,21 @@ module.exports.verifyUserPassword = (username, password, callback) => {
 };
 
 // END OF USER RELATIVE HELPER FUNCTIONS //
+
+// TREASURE RELATIVE HELPER FUNCIONS //
+
+module.exports.insertTreasure = () => {
+
+};
+
+module.exports.selectAllTreasure = (callback) => {
+  connection.query('SELECT * FROM Treasures', (err, treasures) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, treasures);
+    }
+  });
+};
+
+// END OF TREASURE RELATIVE HELPER FUNCTIONS //

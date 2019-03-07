@@ -32,3 +32,7 @@ const db = require('./database/index');
 // db.verifyUserPassword('austin', 'persona4dan', (err, res) => {
 //   console.log(err, res);
 // });
+
+db.selectAllTreasure((err, res) => {
+  console.log(err, res);
+});
