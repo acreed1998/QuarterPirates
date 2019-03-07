@@ -94,3 +94,55 @@ module.exports.selectUserById = (id_user, callback) => {
     }
   })
 };
+
+module.exports.updateUserPassword = (user, password, callback) => {
+  if (user.username) {
+    module.exports.selectUserByUsername(user.username, (err, user) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        if (crypto.pbkdf2Sync(password.oldPassword, user.salt, 1012, 50, 'sha512').toString('hex') === user.password) {
+          connection.query(`UPDATE Users SET password = '${crypto.pbkdf2Sync(password.newPassword, user.salt, 1012, 50, 'sha512').toString('hex')}' WHERE username = '${user.username}'`, (err2) => {
+            if (err2) {
+              callback(err2, null);
+            } else {
+              module.exports.selectUserByUsername(user.username, (err3, updatedUser) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  callback(null, updatedUser);
+                }
+              });
+            }
+          });
+        } else {
+          callback(Error('Passwords did not match'), null);
+        }
+      }
+    });
+  } else if (user.id_user) {
+    module.exports.selectUserById(user.id_user, (err4, user) => {
+      if (err4) {
+        callback(err4, null);
+      } else {
+        if (crypto.pbkdf2Sync(password.oldPassword, user.salt, 1012, 50, 'sha512').toString('hex') === user.password) {
+          connection.query(`UPDATE users SET password = '${crypto.pbkdf2Sync(password.newPassword, user.salt, 1012, 50, 'sha512').toString('hex')}' WHERE username = '${user.username}'`, (err5) => {
+            if (err5) {
+              callback(err5, null);
+            } else {
+              module.exports.selectUserById(user.username, (err6, updatedUser) => {
+                if (err6) {
+                  callback(err6, null);
+                } else {
+                  callback(null, updatedUser);
+                }
+              });
+            }
+          });
+        } else {
+          callback(Error('Passwords did not match'), null);
+        }
+      }
+    });
+  }
+};
