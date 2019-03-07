@@ -32,6 +32,8 @@ connection.connect((err) => {
 
 module.exports.connection = connection;
 
+// USER RELATIVE HELPER FUNCTIONS //
+
 module.exports.insertUser = (username, password, callback) => {
   module.exports.selectAllUsers((err, users) => {
     if (err) {
@@ -95,6 +97,11 @@ module.exports.selectUserById = (id_user, callback) => {
   })
 };
 
+/* 
+user and password are objects
+user needs either a useranme or id_user key
+password needs an oldPassword and newPassword key
+*/
 module.exports.updateUserPassword = (user, password, callback) => {
   if (user.username) {
     module.exports.selectUserByUsername(user.username, (err, user) => {
@@ -146,3 +153,62 @@ module.exports.updateUserPassword = (user, password, callback) => {
     });
   }
 };
+
+module.exports.updateUserGold = (username, amount, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      connection.query(`UPDATE Users SET gold = ${user.gold + parseInt(amount)} WHERE username = '${username}'`, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectUserByUsername(username, (err3, updatedUser) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, updatedUser);
+            }
+          });
+        }
+      });
+    }
+  });
+}
+
+module.exports.updateUserImage = (username, avatar, callback) => {
+  const extensions = ['.jpg', '.png', 'jpeg', 'svg>'];
+  if(_.includes(extensions, _.slice(avatar, avatar.length - 4).join(''))) {
+    connection.query(`UPDATE Users Set avatar = '${avatar}' WHERE username = '${username}'`, (err) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        module.exports.selectUserByUsername(username, (err2, updatedUser) => {
+          if (err2) {
+            callback(err2, null);
+          } else {
+            callback(null, updatedUser);
+          }
+        });
+      }
+    });
+  } else {
+    callback(Error('Invalid image file/link'), null);
+  }
+};
+
+module.exports.verifyUserPassword = (username, password, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      if (user.password === crypto.pbkdf2Sync(password, user.salt, 1012, 50, 'sha512').toString('hex')) {
+        callback(null, user);
+      } else {
+        callback(Error('Invalid Username or Password'), null);
+      }
+    }
+  });
+};
+
+// END OF USER RELATIVE HELPER FUNCTIONS //
