@@ -32,26 +32,35 @@ connection.connect((err) => {
 
 module.exports.connection = connection;
 
-module.exports.insertUser = (username, password) => {
+module.exports.insertUser = (username, password, callback) => {
   module.exports.selectAllUsers((err, users) => {
     if (err) {
       callback(err, null);
     } else {
-      if (!_.includes(_.map(users, user => user.username), username)) {
-        const salt = crypto.randomBytes(16).toString('hex');
-        const avatar = avatars.create(username);
-        const q = [username, crypto.pbkdf2Sync(password, salt, 1012, 50, 'sha512').toString('hex'), salt, avatar];
-        connection.query('INSERT INTO Users (username, password, salt, avatar) VALUES (?, ?, ?, ?)', q, (err2, res) => {
-          if (err2) {
-            callback(err2, null);
-          } else {
-            console.log(res);
-            // callback(null, res);
-          }
-        });
-      } else {
-
-      }
+      module.exports.selectUserByUsername(username, (err2, user) => {
+        if (err2) {
+          callback(err2, null);
+        } else if (user === undefined) {
+          const salt = crypto.randomBytes(16).toString('hex');
+          const avatar = avatars.create(username);
+          const q = [username, crypto.pbkdf2Sync(password, salt, 1012, 50, 'sha512').toString('hex'), salt, avatar];
+          connection.query('INSERT INTO Users (username, password, salt, avatar) VALUES (?, ?, ?, ?)', q, (err3) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              module.exports.selectUserByUsername(username, (err4, newUser) => {
+                if (err4) {
+                  callback(err4, null);
+                } else {
+                  callback(null, newUser);
+                }
+              })
+            }
+          });
+        } else {
+          callback(Error('User already exists'), user);
+        }
+      })
     }
   });
 };
