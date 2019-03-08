@@ -29,9 +29,9 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.verifyUserPassword('austin', 'persona4dan', (err, res) => {
-//   console.log(err, res);
-// });
+db.verifyUserPassword('acreed1998', 'tigerlamb345', (err, res) => {
+  console.log(err, res);
+});
 
 // db.selectAllTreasure((err, res) => {
 //   console.log(err, res);
@@ -53,6 +53,6 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectTreasureByZipcode('70115', (err, res) => {
-  console.log(err, res);
-});
+// db.selectTreasureByZipcode('70115', (err, res) => {
+//   console.log(err, res);
+// });

@@ -97,6 +97,17 @@ module.exports.selectUserById = (id_user, callback) => {
   })
 };
 
+const filterUserInfo = (user) => {
+  const obj = {};
+  const filters = ['password', 'salt'];
+  _.forEach(user, (value, key) => {
+    if (!_.includes(filters, key)) {
+      obj[key] = value;
+    }
+  });
+  return obj;
+};
+
 /* 
 user and password are objects
 user needs either a useranme or id_user key
@@ -203,7 +214,7 @@ module.exports.verifyUserPassword = (username, password, callback) => {
       callback(err, null);
     } else {
       if (user.password === crypto.pbkdf2Sync(password, user.salt, 1012, 50, 'sha512').toString('hex')) {
-        callback(null, user);
+        callback(null, filterUserInfo(user));
       } else {
         callback(Error('Invalid Username or Password'), null);
       }
