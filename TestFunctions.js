@@ -41,6 +41,10 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectTreasuresByUsername('acreed1998', (err, res) => {
+// db.selectTreasuresByUsername('acreed1998', (err, res) => {
+//   console.log(err, res);
+// });
+
+db.updateTreasureDateClaimed('3', (err, res) => {
   console.log(err, res);
 });

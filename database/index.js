@@ -291,4 +291,36 @@ module.exports.selectTreasureById = (id_treasure, callback) => {
   });
 };
 
+module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
+  connection.query(`UPDATE Treasures SET date_claimed = '${new Date().toString()}' WHERE id = ${parseInt(id_treasure)}`, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectTreasureById(parseInt(id_treasure), (err2, updatedTreasure) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          callback(null, updatedTreasure);
+        }
+      });
+    }
+  });
+};
+
+module.exports.deleteTreasureById = (id_treasure, callback) => {
+  connection.query(`DELETE FROM Treasures WHERE id = ${id_treasure}`, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      connection.query(`DELETE FROM Riddles WHERE id_treasure = ${id_treasure}`, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          connection.query(`DELETE FROM UserTreasures`)
+        }
+      });
+    }
+  });
+};
+
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //
