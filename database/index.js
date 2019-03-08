@@ -250,8 +250,45 @@ module.exports.selectAllTreasure = (callback) => {
   });
 };
 
-module.exports.selectUserTreasures = (username, callback) => {
-  
+module.exports.selectTreasuresByUsername = (username, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      connection.query(`SELECT * FROM UserTreasures WHERE id_user = ${user.id}`, (err2, pairs) => {
+        if (err2) {
+          callback(err2, null);
+        } else if (pairs.length !== 0) {
+          const plantIds = _.map(pairs, pair => pair.id_treasure);
+          const userPlants = [];
+          _.forEach(plantIds, (id, index) => {
+            module.exports.selectTreasureById(id, (err3, treasure) => {
+              if (err3) {
+                callback(err3, null);
+              } else {
+                userPlants.push(treasure);
+                if (index === plantIds.length - 1) {
+                  callback(null, userPlants);
+                }
+              }
+            });
+          });
+        } else {
+          callback(null, []);
+        }
+      });
+    }
+  });
+};
+
+module.exports.selectTreasureById = (id_treasure, callback) => {
+  connection.query(`SELECT * FROM Treasures WHERE id = ${id_treasure}`, (err, singleTreasureArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleTreasureArray[0]);
+    }
+  });
 };
 
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //
