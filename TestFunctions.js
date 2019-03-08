@@ -53,4 +53,6 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-
+db.selectTreasureByZipcode('70115', (err, res) => {
+  console.log(err, res);
+});

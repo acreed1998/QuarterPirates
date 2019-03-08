@@ -291,6 +291,16 @@ module.exports.selectTreasureById = (id_treasure, callback) => {
   });
 };
 
+module.exports.selectTreasureByZipcode = (zipcode, callback) => {
+  connection.query(`SELECT * FROM Treasures WHERE zipcode = ${parseInt(zipcode)}`, (err, treasures) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, treasures);
+    }
+  });
+}
+
 module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
   connection.query(`UPDATE Treasures SET date_claimed = '${new Date().toString()}' WHERE id = ${parseInt(id_treasure)}`, (err) => {
     if (err) {
