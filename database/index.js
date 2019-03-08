@@ -374,6 +374,24 @@ module.exports.deleteTreasureById = (id_treasure, callback) => {
 
 // RIDDLE RELATIVE HELPER FUNCTIONS //
 
+module.exports.insertRiddle = (latitude, longitude, address, city, state, zipcode, riddle, id_treasure, callback) => {
+  const date = new Date();
+  const q = [parseFloat(latitude), parseFloat(longitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`), riddle, id_treasure];
+  connection.query('INSERT INTO Riddles (latitude, longitude, address, city, state, zipcode, date_created, time_created, riddle, id_treasure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectAllRiddles((err2, riddles) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          callback(null, riddles[riddles.length - 1]);
+        }
+      });
+    }
+  });
+};
+
 module.exports.selectAllRiddles = (callback) => {
   connection.query('SELECT * FROM Riddles', (err, riddles) => {
     if (err) {
