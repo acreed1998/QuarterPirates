@@ -307,6 +307,24 @@ module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
   });
 };
 
+module.exports.updateTreasureTimeClaimed = (id_treasure, callback) => {
+  const date = new Date();
+  const time = parseInt(`${date.getHours()}${date.getMinutes()}`);
+  connection.query(`UPDATE Treasures SET time_claimed = ${time} WHERE id = ${parseInt(id_treasure)}`, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectTreasureById(parseInt(id_treasure), (err2, treasure) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          callback(null, treasure);
+        }
+      });
+    }
+  });
+};
+
 module.exports.deleteTreasureById = (id_treasure, callback) => {
   connection.query(`DELETE FROM Treasures WHERE id = ${id_treasure}`, (err) => {
     if (err) {

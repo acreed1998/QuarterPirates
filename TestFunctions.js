@@ -45,6 +45,12 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.updateTreasureDateClaimed('3', (err, res) => {
-  console.log(err, res);
-});
+// db.updateTreasureDateClaimed('3', (err, res) => {
+//   console.log(err, res);
+// });
+
+// db.updateTreasureTimeClaimed('3', (err, res) => {
+//   console.log(err, res);
+// });
+
+
