@@ -5,7 +5,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.insertUser('austin1', 'reed2', (err, user) => {
+// db.insertUser('acreed1998', 'tigerlamb345', (err, user) => {
 //   console.log(err, user);
 // });
 
@@ -33,6 +33,10 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectAllTreasure((err, res) => {
+// db.selectAllTreasure((err, res) => {
+//   console.log(err, res);
+// });
+
+db.insertTreasure(1000, -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 1, (err, res) => {
   console.log(err, res);
 });

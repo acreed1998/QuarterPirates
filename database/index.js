@@ -215,8 +215,29 @@ module.exports.verifyUserPassword = (username, password, callback) => {
 
 // TREASURE RELATIVE HELPER FUNCIONS //
 
-module.exports.insertTreasure = () => {
-
+module.exports.insertTreasure = (gold_value, longitude, latitude, address, city, state, zipcode, id_user, callback) => {
+  const date = new Date();
+  const q = [gold_value, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`)];
+  connection.query('INSERT INTO Treasures (gold_value, longitude, latitude, address, city, state, zipcode, date_created, time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectAllTreasure((err2, treasures) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          const newTreasure = treasures[treasures.length - 1];
+          connection.query('INSERT INTO UserTreasures (id_user, id_treasure) VALUES (?, ?)', [id_user, newTreasure.id], (err3) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, newTreasure);
+            }
+          });
+        }
+      });
+    }
+  });
 };
 
 module.exports.selectAllTreasure = (callback) => {
@@ -227,6 +248,10 @@ module.exports.selectAllTreasure = (callback) => {
       callback(null, treasures);
     }
   });
+};
+
+module.exports.selectUserTreasures = (username, callback) => {
+  
 };
 
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //

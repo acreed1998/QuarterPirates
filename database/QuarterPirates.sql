@@ -38,13 +38,13 @@ CREATE TABLE Treasures(
   longitude FLOAT(11) NOT NULL,
   latitude FLOAT(11) NOT NULL,
   address TEXT NOT NULL,
-  zipcode INTEGER NOT NULL,
   city TEXT NOT NULL,
   state TEXT NOT NULL,
+  zipcode INTEGER NOT NULL,
   date_created TEXT NOT NULL,
-  date_claimed TEXT NOT NULL,
+  date_claimed TEXT DEFAULT NULL,
   time_created INTEGER NOT NULL,
-  time_claimed INTEGER NOT NULL,
+  time_claimed INTEGER DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
