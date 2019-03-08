@@ -214,7 +214,15 @@ module.exports.verifyUserPassword = (username, password, callback) => {
       callback(err, null);
     } else {
       if (user.password === crypto.pbkdf2Sync(password, user.salt, 1012, 50, 'sha512').toString('hex')) {
-        callback(null, filterUserInfo(user));
+        const fileredUser = filterUserInfo(user)
+        module.exports.selectTreasuresByUsername(fileredUser.username, (err2, treasures) => {
+          if (err2) {
+            callback(err2, null);
+          } else {
+            fileredUser.treasures = treasures;
+            callback(null, fileredUser);
+          }
+        });
       } else {
         callback(Error('Invalid Username or Password'), null);
       }
@@ -302,7 +310,7 @@ module.exports.selectTreasureById = (id_treasure, callback) => {
   });
 };
 
-module.exports.selectTreasureByZipcode = (zipcode, callback) => {
+module.exports.selectTreasuresByZipcode = (zipcode, callback) => {
   connection.query(`SELECT * FROM Treasures WHERE zipcode = ${parseInt(zipcode)}`, (err, treasures) => {
     if (err) {
       callback(err, null);
@@ -363,3 +371,21 @@ module.exports.deleteTreasureById = (id_treasure, callback) => {
 };
 
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //
+
+// RIDDLE RELATIVE HELPER FUNCTIONS //
+
+module.exports.selectAllRiddles = (callback) => {
+  connection.query('SELECT * FROM Riddles', (err, riddles) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, riddles);
+    }
+  })
+};
+
+module.exports.selectRiddlesByUsername = (username, callback) => {
+  return [];
+};
+
+// END OF RIDDLE RELATIVE HELPER FUNCTIONS //

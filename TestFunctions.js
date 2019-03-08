@@ -53,6 +53,6 @@ db.verifyUserPassword('acreed1998', 'tigerlamb345', (err, res) => {
 //   console.log(err, res);
 // });
 
-// db.selectTreasureByZipcode('70115', (err, res) => {
+// db.selectTreasuresByZipcode('70115', (err, res) => {
 //   console.log(err, res);
 // });
