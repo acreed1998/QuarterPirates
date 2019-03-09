@@ -34,6 +34,17 @@ module.exports.connection = connection;
 
 // USER RELATIVE HELPER FUNCTIONS //
 
+const filterUserInfo = (user) => {
+  const obj = {};
+  const filters = ['password', 'salt'];
+  _.forEach(user, (value, key) => {
+    if (!_.includes(filters, key)) {
+      obj[key] = value;
+    }
+  });
+  return obj;
+};
+
 module.exports.insertUser = (username, password, callback) => {
   module.exports.selectAllUsers((err, users) => {
     if (err) {
@@ -95,17 +106,6 @@ module.exports.selectUserById = (id_user, callback) => {
       callback(null, singleUserArray[0]);
     }
   })
-};
-
-const filterUserInfo = (user) => {
-  const obj = {};
-  const filters = ['password', 'salt'];
-  _.forEach(user, (value, key) => {
-    if (!_.includes(filters, key)) {
-      obj[key] = value;
-    }
-  });
-  return obj;
 };
 
 /* 
@@ -383,7 +383,7 @@ module.exports.deleteTreasureById = (id_treasure, callback) => {
 
 module.exports.insertRiddle = (latitude, longitude, address, city, state, zipcode, riddle, id_treasure, callback) => {
   const date = new Date();
-  const q = [parseFloat(latitude), parseFloat(longitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`), riddle, id_treasure];
+  const q = [parseFloat(latitude), parseFloat(longitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`), riddle, parseInt(id_treasure)];
   connection.query('INSERT INTO Riddles (latitude, longitude, address, city, state, zipcode, date_created, time_created, riddle, id_treasure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', q, (err) => {
     if (err) {
       callback(err, null);
@@ -424,42 +424,98 @@ module.exports.selectRiddlesByUsername = (username, callback) => {
     if (err) {
       callback(err, null);
     } else {
-      const treasureIds = _.map(treasures, treasure => treasure.id);
-      const riddles = [];
-      _.forEach(treasureIds, (id, index) => {
-        module.exports.selectRiddleByTreasure(id, (err2, riddle) => {
-          if (err2) {
-            callback(err2, null);
-          } else {
-            riddles.push(riddle);
-            if (index === treasureIds.length - 1) {
-              callback(null, riddles);
+      if (treasures.length !== 0) {
+        const treasureIds = _.map(treasures, treasure => treasure.id);
+        const riddles = [];
+        _.forEach(treasureIds, (id, index) => {
+          module.exports.selectRiddleByTreasure(id, (err2, riddle) => {
+            if (err2) {
+              callback(err2, null);
+            } else {
+              riddles.push(riddle);
+              if (index === treasureIds.length - 1) {
+                callback(null, _.filter(riddles, riddle => riddle !== undefined));
+              }
             }
-          }
+          });
         });
-      });
+      } else {
+        callback(null, []);
+      }
     }
   });
 };
 
-module.exports.updateRiddleViews = (id_riddle, callback) => {
-  module.exports.selectRiddleById(parseInt(id_riddle), (err, riddle) => {
+module.exports.updateRiddleViews = (username, id_riddle, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (user === undefined) {
+      callback(null, []);
     } else {
-      connection.query(`UPDATE Riddles SET views = ${riddle.views + 1} WHERE id = ${parseInt(id_riddle)}`, (err2) => {
+      connection.query(`SELECT * FROM RiddleViews WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
           callback(err2, null);
         } else {
-          module.exports.selectRiddleById(parseInt(id_riddle), (err3, updatedRiddle) => {
-            if (err3) {
-              callback(err3, null);
+          if (pairs.length === 0) {
+            module.exports.selectRiddleById(parseInt(id_riddle), (err, riddle) => {
+              if (err) {
+                callback(err, null);
+              } else {
+                connection.query(`UPDATE Riddles SET views = ${riddle.views + 1} WHERE id = ${parseInt(id_riddle)}`, (err2) => {
+                  if (err2) {
+                    callback(err2, null);
+                  } else {
+                    connection.query(`INSERT INTO RiddleViews (id_user, id_riddle) VALUES (?, ?)`, [user.id, parseInt(id_riddle)], (err3) => {
+                      if (err3) {
+                        callback(err3, null);
+                      } else {
+                        module.exports.selectRiddleById(parseInt(id_riddle), (err4, updatedRiddle) => {
+                          if (err4) {
+                            callback(err4, null);
+                          } else {
+                            callback(null, updatedRiddle);
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            if (_.includes(_.map(pairs, pair => pair.id_riddle), parseInt(id_riddle))) {
+              callback(null, []);
             } else {
-              callback(null, updatedRiddle);
+              module.exports.selectRiddleById(parseInt(id_riddle), (err, riddle) => {
+                if (err) {
+                  callback(err, null);
+                } else {
+                  connection.query(`UPDATE Riddles SET views = ${riddle.views + 1} WHERE id = ${parseInt(id_riddle)}`, (err2) => {
+                    if (err2) {
+                      callback(err2, null);
+                    } else {
+                      connection.query(`INSERT INTO RiddleViews (id_user, id_riddle) VALUES (?, ?)`, [user.id, parseInt(id_riddle)], (err) => {
+                        if (err3) {
+                          callback(err3, null);
+                        } else {
+                          module.exports.selectRiddleById(parseInt(id_riddle), (err4, updatedRiddle) => {
+                            if (err4) {
+                              callback(err4, null);
+                            } else {
+                              callback(null, updatedRiddle);
+                            }
+                          });
+                        }
+                      });
+                    }
+                  });
+                }
+              });
             }
-          });
+          }
         }
-      });
+      }); 
     }
   });
 };

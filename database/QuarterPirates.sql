@@ -62,11 +62,9 @@ CREATE TABLE UserTreasures(
   PRIMARY KEY (id)
 );
 
-CREATE TABLE TreasureRiddles(
+CREATE TABLE RiddleViews(
   id INTEGER AUTO_INCREMENT NOT NULL,
-  id_treasure INTEGER NOT NULL,
+  id_user INTEGER NOT NULL,
   id_riddle INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
-
-ALTER TABLE Riddles ADD FOREIGN KEY (id_treasure) REFERENCES Treasures (id);

@@ -5,7 +5,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.insertUser('acreed1998', 'tigerlamb345', (err, user) => {
+// db.insertUser('acreed', 'tigerlamb345', (err, user) => {
 //   console.log(err, user);
 // });
 
@@ -57,7 +57,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.insertRiddle(-90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', 3, (err, res) => {
+// db.insertRiddle(-90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', '1', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -69,6 +69,6 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.updateRiddleViews('1', (err, res) => {
-  console.log(err, res);
-});
+// db.updateRiddleViews('acreed', '1', (err, res) => {
+//   console.log(err, res);
+// });
