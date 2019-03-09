@@ -61,6 +61,10 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectRiddleByTreasure('3', (err, res) => {
-  console.log(err, res);
-});
+// db.selectRiddleByTreasure('3', (err, res) => {
+//   console.log(err, res);
+// });
+
+// db.selectRiddlesByUsername('acreed1998', (err, res) => {
+//   console.log(err, res);
+// });

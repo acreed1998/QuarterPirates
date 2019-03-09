@@ -220,7 +220,14 @@ module.exports.verifyUserPassword = (username, password, callback) => {
             callback(err2, null);
           } else {
             fileredUser.treasures = treasures;
-            callback(null, fileredUser);
+            module.exports.selectRiddlesByUsername(fileredUser.username, (err3, riddles) => {
+              if (err3) {
+                callback(err3, null);
+              } else {
+                fileredUser.riddles = riddles;
+                callback(null, fileredUser);
+              }
+            });
           }
         });
       } else {
@@ -413,7 +420,34 @@ module.exports.selectRiddleByTreasure = (id_treasure, callback) => {
 };
 
 module.exports.selectRiddlesByUsername = (username, callback) => {
-  return [];
+  module.exports.selectTreasuresByUsername(username, (err, treasures) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      const treasureIds = _.map(treasures, treasure => treasure.id);
+      const riddles = [];
+      _.forEach(treasureIds, (id, index) => {
+        module.exports.selectRiddleByTreasure(id, (err2, riddle) => {
+          if (err2) {
+            callback(err2, null);
+          } else {
+            riddles.push(riddle);
+            if (index === treasureIds.length - 1) {
+              callback(null, riddles);
+            }
+          }
+        });
+      });
+    }
+  });
+};
+
+module.exports.updateRiddleViews = (username, id_riddle, callback) => {
+
+}
+
+module.exports.selectRiddleById = (id_riddle, callback) => {
+  
 };
 
 // END OF RIDDLE RELATIVE HELPER FUNCTIONS //
