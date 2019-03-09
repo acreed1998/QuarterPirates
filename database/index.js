@@ -242,9 +242,8 @@ module.exports.verifyUserPassword = (username, password, callback) => {
 // TREASURE RELATIVE HELPER FUNCIONS //
 
 module.exports.insertTreasure = (gold_value, longitude, latitude, address, city, state, zipcode, id_user, callback) => {
-  const date = new Date();
-  const q = [gold_value, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`)];
-  connection.query('INSERT INTO Treasures (gold_value, longitude, latitude, address, city, state, zipcode, date_created, time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+  const q = [gold_value, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
+  connection.query('INSERT INTO Treasures (gold_value, longitude, latitude, address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?)', q, (err) => {
     if (err) {
       callback(err, null);
     } else {
@@ -328,7 +327,7 @@ module.exports.selectTreasuresByZipcode = (zipcode, callback) => {
 }
 
 module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
-  connection.query(`UPDATE Treasures SET date_claimed = '${new Date().toString()}' WHERE id = ${parseInt(id_treasure)}`, (err) => {
+  connection.query(`UPDATE Treasures SET date_claimed = CURRENT_TIMESTAMP WHERE id = ${parseInt(id_treasure)}`, (err) => {
     if (err) {
       callback(err, null);
     } else {
@@ -337,24 +336,6 @@ module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
           callback(err2, null);
         } else {
           callback(null, updatedTreasure);
-        }
-      });
-    }
-  });
-};
-
-module.exports.updateTreasureTimeClaimed = (id_treasure, callback) => {
-  const date = new Date();
-  const time = parseInt(`${date.getHours()}${date.getMinutes()}`);
-  connection.query(`UPDATE Treasures SET time_claimed = ${time} WHERE id = ${parseInt(id_treasure)}`, (err) => {
-    if (err) {
-      callback(err, null);
-    } else {
-      module.exports.selectTreasureById(parseInt(id_treasure), (err2, treasure) => {
-        if (err2) {
-          callback(err2, null);
-        } else {
-          callback(null, treasure);
         }
       });
     }
@@ -381,10 +362,9 @@ module.exports.deleteTreasureById = (id_treasure, callback) => {
 
 // RIDDLE RELATIVE HELPER FUNCTIONS //
 
-module.exports.insertRiddle = (latitude, longitude, address, city, state, zipcode, riddle, id_treasure, callback) => {
-  const date = new Date();
-  const q = [parseFloat(latitude), parseFloat(longitude), address, city, state, parseInt(zipcode), date.toString(), parseInt(`${date.getHours()}${date.getMinutes()}`), riddle, parseInt(id_treasure)];
-  connection.query('INSERT INTO Riddles (latitude, longitude, address, city, state, zipcode, date_created, time_created, riddle, id_treasure) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+module.exports.insertRiddle = (title, latitude, longitude, address, city, state, zipcode, riddle, id_treasure, callback) => {
+  const q = [title, parseFloat(latitude), parseFloat(longitude), address, city, state, parseInt(zipcode), riddle, parseInt(id_treasure)];
+  connection.query('INSERT INTO Riddles (title, latitude, longitude, address, city, state, zipcode, date_created, riddle, id_treasure) VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?)', q, (err) => {
     if (err) {
       callback(err, null);
     } else {
@@ -531,3 +511,32 @@ module.exports.selectRiddleById = (id_riddle, callback) => {
 };
 
 // END OF RIDDLE RELATIVE HELPER FUNCTIONS //
+
+// GOLD TRANSACTION HELPER FUNCTIONS //
+
+module.exports.insertGoldTransaction = (id_user, gold_value, callback) => {
+  const q = [parseInt(id_user), parseInt(gold_value)];
+  connection.query(`INSERT INTO GoldTransactions (id_user, gold_value) VALUES (?, ?)`, q, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectAllGoldTransactions((err2, transactions) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          callback(null, transactions[transactions.length - 1]);
+        }
+      });
+    }
+  });
+};
+
+module.exports.selectAllGoldTransactions = (callback) => {
+  connection.query('SELECT * FROM GoldTransactions', (err, gold_transactions) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, gold_transactions);
+    }
+  });
+};

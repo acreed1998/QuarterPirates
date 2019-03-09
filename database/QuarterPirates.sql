@@ -18,14 +18,14 @@ CREATE TABLE Users (
 
 CREATE TABLE Riddles (
   id INTEGER AUTO_INCREMENT NOT NULL,
+  title TEXT NOT NULL,
   longitude FLOAT(11) NOT NULL,
   latitude FLOAT(11) NOT NULL,
   address TEXT NOT NULL,
   zipcode INTEGER NOT NULL,
   city TEXT NOT NULL,
   state TEXT NOT NULL,
-  date_created TEXT NOT NULL,
-  time_created INTEGER NOT NULL,
+  date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   views INTEGER NOT NULL DEFAULT 0,
   riddle TEXT NOT NULL,
   id_treasure INTEGER DEFAULT NULL,
@@ -41,10 +41,23 @@ CREATE TABLE Treasures(
   city TEXT NOT NULL,
   state TEXT NOT NULL,
   zipcode INTEGER NOT NULL,
-  date_created TEXT NOT NULL,
-  date_claimed TEXT DEFAULT NULL,
-  time_created INTEGER NOT NULL,
-  time_claimed INTEGER DEFAULT NULL,
+  date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date_claimed TIMESTAMP DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE Items(
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE GoldTransactions(
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  id_user INTEGER NOT NULL,
+  gold_value INTEGER NOT NULL,
+  date_transaction TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 );
 
@@ -66,5 +79,14 @@ CREATE TABLE RiddleViews(
   id INTEGER AUTO_INCREMENT NOT NULL,
   id_user INTEGER NOT NULL,
   id_riddle INTEGER NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE UserInventory(
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  category ENUM('riddle', 'item') NOT NULL,
+  id_user INTEGER NOT NULL,
+  id_item INTEGER DEFAULT NULL,
+  id_riddle INTEGER DEFAULT NULL,
   PRIMARY KEY (id)
 );
