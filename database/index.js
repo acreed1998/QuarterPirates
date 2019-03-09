@@ -402,6 +402,16 @@ module.exports.selectAllRiddles = (callback) => {
   })
 };
 
+module.exports.selectRiddleByTreasure = (id_treasure, callback) => {
+  connection.query(`SELECT * FROM Riddles WHERE id_treasure = ${parseInt(id_treasure)}`, (err, singleTreasureArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleTreasureArray[0]);
+    }
+  });
+};
+
 module.exports.selectRiddlesByUsername = (username, callback) => {
   return [];
 };

@@ -60,3 +60,7 @@ const db = require('./database/index');
 // db.insertRiddle(-90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', 3, (err, res) => {
 //   console.log(err, res);
 // });
+
+db.selectRiddleByTreasure('3', (err, res) => {
+  console.log(err, res);
+});
