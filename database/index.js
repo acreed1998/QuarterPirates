@@ -540,3 +540,21 @@ module.exports.selectAllGoldTransactions = (callback) => {
     }
   });
 };
+
+module.exports.selectGoldTransactionsByUsername = (username, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(null, []);
+    } else {
+      connection.query(`SELECT * FROM GoldTransactions WHERE id_user = ${user.id}`, (err2, transactions) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          callback(null, transactions);
+        }
+      });
+    }
+  });
+};

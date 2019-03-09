@@ -76,3 +76,7 @@ const db = require('./database/index');
 // db.insertGoldTransaction('1', -500, (err, res) => {
 //   console.log(err, res);
 // });
+
+db.selectGoldTransactionsByUsername('acreed1998', (err, res) => {
+  console.log(err, res);
+});
