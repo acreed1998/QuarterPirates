@@ -68,3 +68,7 @@ const db = require('./database/index');
 // db.selectRiddlesByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
 // });
+
+db.updateRiddleViews('1', (err, res) => {
+  console.log(err, res);
+});

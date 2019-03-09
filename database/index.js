@@ -442,12 +442,36 @@ module.exports.selectRiddlesByUsername = (username, callback) => {
   });
 };
 
-module.exports.updateRiddleViews = (username, id_riddle, callback) => {
-
-}
+module.exports.updateRiddleViews = (id_riddle, callback) => {
+  module.exports.selectRiddleById(parseInt(id_riddle), (err, riddle) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      connection.query(`UPDATE Riddles SET views = ${riddle.views + 1} WHERE id = ${parseInt(id_riddle)}`, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectRiddleById(parseInt(id_riddle), (err3, updatedRiddle) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, updatedRiddle);
+            }
+          });
+        }
+      });
+    }
+  });
+};
 
 module.exports.selectRiddleById = (id_riddle, callback) => {
-  
+  connection.query(`SELECT * FROM Riddles WHERE id = ${parseInt(id_riddle)}`, (err, singleRiddleArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleRiddleArray[0]);
+    }
+  });
 };
 
 // END OF RIDDLE RELATIVE HELPER FUNCTIONS //
