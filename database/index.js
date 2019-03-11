@@ -551,7 +551,7 @@ module.exports.updateRiddleViews = (username, id_riddle, callback) => {
     } else if (user === undefined) {
       callback(null, []);
     } else {
-      connection.query(`SELECT * FROM RiddleViews WHERE id_user = ${user.id}`, (err2, pairs) => {
+      connection.query(`SELECT * FROM RiddleViewers WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
           callback(err2, null);
         } else {
@@ -564,7 +564,7 @@ module.exports.updateRiddleViews = (username, id_riddle, callback) => {
                   if (err2) {
                     callback(err2, null);
                   } else {
-                    connection.query(`INSERT INTO RiddleViews (id_user, id_riddle) VALUES (?, ?)`, [user.id, parseInt(id_riddle)], (err3) => {
+                    connection.query(`INSERT INTO RiddleViewers (id_user, id_riddle) VALUES (?, ?)`, [user.id, parseInt(id_riddle)], (err3) => {
                       if (err3) {
                         callback(err3, null);
                       } else {
