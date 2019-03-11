@@ -55,6 +55,7 @@ CREATE TABLE Items(
 
 CREATE TABLE GoldTransactions(
   id INTEGER AUTO_INCREMENT NOT NULL,
+  type ENUM('gain', 'loss') NOT NULL,
   id_user INTEGER NOT NULL,
   gold_value INTEGER NOT NULL,
   date_transaction TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

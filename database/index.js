@@ -45,6 +45,33 @@ const filterUserInfo = (user) => {
   return obj;
 };
 
+module.exports.selectFilteredUserInfoByUsername = (username, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(null, []);
+    } else {
+      const fileredUser = filterUserInfo(user)
+      module.exports.selectTreasuresByUsername(fileredUser.username, (err2, treasures) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          fileredUser.treasures = treasures;
+          module.exports.selectRiddlesByUsername(fileredUser.username, (err3, riddles) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              fileredUser.riddles = riddles;
+              callback(null, fileredUser);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
 module.exports.insertUser = (username, password, callback) => {
   module.exports.selectAllUsers((err, users) => {
     if (err) {
@@ -118,6 +145,8 @@ module.exports.updateUserPassword = (user, password, callback) => {
     module.exports.selectUserByUsername(user.username, (err, user) => {
       if (err) {
         callback(err, null);
+      } else if (!user) {
+        callback(err, []);
       } else {
         if (crypto.pbkdf2Sync(password.oldPassword, user.salt, 1012, 50, 'sha512').toString('hex') === user.password) {
           connection.query(`UPDATE Users SET password = '${crypto.pbkdf2Sync(password.newPassword, user.salt, 1012, 50, 'sha512').toString('hex')}' WHERE username = '${user.username}'`, (err2) => {
@@ -128,7 +157,7 @@ module.exports.updateUserPassword = (user, password, callback) => {
                 if (err3) {
                   callback(err3, null);
                 } else {
-                  callback(null, updatedUser);
+                  callback(null, filterUserInfo(updatedUser));
                 }
               });
             }
@@ -178,14 +207,14 @@ module.exports.updateUserGold = (username, amount, callback) => {
             if (err3) {
               callback(err3, null);
             } else {
-              callback(null, updatedUser);
+              callback(null, filterUserInfo(updatedUser));
             }
           });
         }
       });
     }
   });
-}
+};
 
 module.exports.updateUserImage = (username, avatar, callback) => {
   const extensions = ['.jpg', '.png', 'jpeg', 'svg>'];
@@ -198,7 +227,7 @@ module.exports.updateUserImage = (username, avatar, callback) => {
           if (err2) {
             callback(err2, null);
           } else {
-            callback(null, updatedUser);
+            callback(null, filterUserInfo(updatedUser));
           }
         });
       }
@@ -324,7 +353,7 @@ module.exports.selectTreasuresByZipcode = (zipcode, callback) => {
       callback(null, treasures);
     }
   });
-}
+};
 
 module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
   connection.query(`UPDATE Treasures SET date_claimed = CURRENT_TIMESTAMP WHERE id = ${parseInt(id_treasure)}`, (err) => {
@@ -515,8 +544,8 @@ module.exports.selectRiddleById = (id_riddle, callback) => {
 // GOLD TRANSACTION HELPER FUNCTIONS //
 
 module.exports.insertGoldTransaction = (id_user, gold_value, callback) => {
-  const q = [parseInt(id_user), parseInt(gold_value)];
-  connection.query(`INSERT INTO GoldTransactions (id_user, gold_value) VALUES (?, ?)`, q, (err) => {
+  const q = [(parseInt(gold_value) > 0) ? 'gain' : 'loss', parseInt(id_user), parseInt(gold_value)];
+  connection.query(`INSERT INTO GoldTransactions (type, id_user, gold_value) VALUES (?, ?, ?)`, q, (err) => {
     if (err) {
       callback(err, null);
     } else {

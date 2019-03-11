@@ -17,11 +17,11 @@ const db = require('./database/index');
 //   console.log(err, user);
 // });
 
-// db.updateUserPassword({ username: 'austin' }, { oldPassword: 'tigerlamb345', newPassword: 'persona4dan' }, (err, updatedUser) => {
+// db.updateUserPassword({ username: 'acreed1998' }, { oldPassword: 'tigerlamb345', newPassword: 'persona4dan' }, (err, updatedUser) => {
 //   console.log(err, updatedUser);
 // });
 
-// db.updateUserGold('austin', '50000000', (err, updateUser) => {
+// db.updateUserGold('acreed1998', '50000000', (err, updateUser) => {
 //   console.log(err, updateUser);
 // });
 
@@ -30,6 +30,10 @@ const db = require('./database/index');
 // });
 
 // db.verifyUserPassword('acreed1998', 'tigerlamb345', (err, res) => {
+//   console.log(err, res);
+// });
+
+// db.selectFilteredUserInfoByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -77,6 +81,6 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectGoldTransactionsByUsername('acreed1998', (err, res) => {
-  console.log(err, res);
-});
+// db.selectGoldTransactionsByUsername('acreed1998', (err, res) => {
+//   console.log(err, res);
+// });
