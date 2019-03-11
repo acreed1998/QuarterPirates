@@ -19,30 +19,20 @@ CREATE TABLE Users (
 CREATE TABLE Riddles (
   id INTEGER AUTO_INCREMENT NOT NULL,
   title TEXT NOT NULL,
-  longitude FLOAT(11) NOT NULL,
-  latitude FLOAT(11) NOT NULL,
-  address TEXT NOT NULL,
-  zipcode INTEGER NOT NULL,
-  city TEXT NOT NULL,
-  state TEXT NOT NULL,
   date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   views INTEGER NOT NULL DEFAULT 0,
   riddle TEXT NOT NULL,
-  id_treasure INTEGER DEFAULT NULL,
+  id_treasure INTEGER NOT NULL,
+  id_location INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE Treasures(
   id INTEGER AUTO_INCREMENT NOT NULL,
   gold_value INTEGER NOT NULL,
-  longitude FLOAT(11) NOT NULL,
-  latitude FLOAT(11) NOT NULL,
-  address TEXT NOT NULL,
-  city TEXT NOT NULL,
-  state TEXT NOT NULL,
-  zipcode INTEGER NOT NULL,
   date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   date_claimed TIMESTAMP DEFAULT '2000-01-01 00:00:00',
+  id_location INTEGER NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -76,7 +66,7 @@ CREATE TABLE UserTreasures(
   PRIMARY KEY (id)
 );
 
-CREATE TABLE RiddleViews(
+CREATE TABLE RiddleViewers(
   id INTEGER AUTO_INCREMENT NOT NULL,
   id_user INTEGER NOT NULL,
   id_riddle INTEGER NOT NULL,
@@ -91,3 +81,15 @@ CREATE TABLE UserInventory(
   id_riddle INTEGER DEFAULT NULL,
   PRIMARY KEY (id)
 );
+
+CREATE TABLE Locations(
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  category ENUM('riddle', 'treasure') NOT NULL,
+  longitude FLOAT(11) NOT NULL,
+  latitude FLOAT(11) NOT NULL,
+  address TEXT NOT NULL,
+  city TEXT NOT NULL,
+  state TEXT NOT NULL,
+  zipcode INTEGER NOT NULL,
+  PRIMARY KEY (id)
+)
