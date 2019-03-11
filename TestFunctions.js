@@ -9,11 +9,11 @@ const db = require('./database/index');
 //   console.log(err, user);
 // });
 
-// db.selectUserByUsername('austin', (err, user) => {
+// db.selectUserByUsername('acreed1998', (err, user) => {
 //   console.log(err, user);
 // });
 
-// db.selectUserById(1, (err, user) => {
+// db.selectUserById('1', (err, user) => {
 //   console.log(err, user);
 // });
 
@@ -29,7 +29,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.verifyUserPassword('acreed1998', 'tigerlamb345', (err, res) => {
+// db.verifyUserPassword('acreed1998', 'persona4dan', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -53,19 +53,15 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.updateTreasureTimeClaimed('3', (err, res) => {
-//   console.log(err, res);
-// });
-
 // db.selectTreasuresByZipcode('70115', (err, res) => {
 //   console.log(err, res);
 // });
 
-// db.insertRiddle("It's literally right in front of you", -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', '1', (err, res) => {
+// db.insertRiddle("It's literally right in front of you", -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', '1', '1', (err, res) => {
 //   console.log(err, res);
 // });
 
-// db.selectRiddleByTreasure('3', (err, res) => {
+// db.selectRiddleByTreasure('1', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -73,7 +69,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.updateRiddleViews('acreed', '1', (err, res) => {
+// db.updateRiddleViews('acreed1998', '1', (err, res) => {
 //   console.log(err, res);
 // });
 
