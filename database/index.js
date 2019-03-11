@@ -271,13 +271,54 @@ module.exports.verifyUserPassword = (username, password, callback) => {
 // TREASURE RELATIVE HELPER FUNCIONS //
 
 module.exports.insertTreasure = (gold_value, longitude, latitude, address, city, state, zipcode, id_user, callback) => {
-  const treasureValues = [gold_value];
-  const locationValues = [parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
-  connection.query("INSERT INTO Locations (category, longitude, latitude, address, city, state, zipcode) VALUES ('treasure', ?, ?, ?, ?, ?, ?)", locationValues, (err) => {
+  module.exports.selectUserById(parseInt(id_user), (err, user) => {
     if (err) {
       callback(err, null);
     } else {
-
+      module.exports.selectTreasuresByUsername(user.username, (err2, treasures) => {
+        if (err2) {
+          callback(err2, null);
+        } else if (treasures.length === 5) {
+          callback(Error('Already 5 Treasures!'), null);
+        } else {
+          const treasureValues = [gold_value];
+          const locationValues = [parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
+          connection.query("INSERT INTO Locations (category, longitude, latitude, address, city, state, zipcode) VALUES ('treasure', ?, ?, ?, ?, ?, ?)", locationValues, (err) => {
+            if (err) {
+              callback(err, null);
+            } else {
+              module.exports.selectLocationsByCategory('treasure', (err2, locations) => {
+                if (err2) {
+                  callback(err2, null);
+                } else {
+                  treasureValues.push(locations[locations.length - 1].id);
+                  connection.query('INSERT INTO Treasures (gold_value, id_location) VALUES (?, ?)', treasureValues, (err3) => {
+                    if (err3) {
+                      callback(err3, null);
+                    } else {
+                      module.exports.selectTreasureByLocationId(locations[locations.length - 1].id, (err4, treasure) => {
+                        if (err4) {
+                          callback(err4, null);
+                        } else {
+                          connection.query(`INSERT INTO UserTreasures (id_user, id_treasure) VALUES (?, ?)`, [id_user, treasure.id], (err5) => {
+                            if (err) {
+                              callback(err5, null);
+                            } else {
+                              const obj = treasure;
+                              obj.location_data = locations[locations.length - 1];
+                              callback(null, obj);
+                            }
+                          });
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
     }
   });
 };
@@ -301,16 +342,16 @@ module.exports.selectTreasuresByUsername = (username, callback) => {
         if (err2) {
           callback(err2, null);
         } else if (pairs.length !== 0) {
-          const plantIds = _.map(pairs, pair => pair.id_treasure);
-          const userPlants = [];
-          _.forEach(plantIds, (id, index) => {
+          const treasureIds = _.map(pairs, pair => pair.id_treasure);
+          const UserTreasures = [];
+          _.forEach(treasureIds, (id, index) => {
             module.exports.selectTreasureById(id, (err3, treasure) => {
               if (err3) {
                 callback(err3, null);
               } else {
-                userPlants.push(treasure);
-                if (index === plantIds.length - 1) {
-                  callback(null, userPlants);
+                UserTreasures.push(treasure);
+                if (index === treasureIds.length - 1) {
+                  callback(null, UserTreasures);
                 }
               }
             });
@@ -325,6 +366,16 @@ module.exports.selectTreasuresByUsername = (username, callback) => {
 
 module.exports.selectTreasureById = (id_treasure, callback) => {
   connection.query(`SELECT * FROM Treasures WHERE id = ${id_treasure}`, (err, singleTreasureArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleTreasureArray[0]);
+    }
+  });
+};
+
+module.exports.selectTreasureByLocationId = (id_location, callback) => {
+  connection.query(`SELECT * FROM Treasures WHERE id_location = ${id_location}`, (err, singleTreasureArray) => {
     if (err) {
       callback(err, null);
     } else {
@@ -598,4 +649,4 @@ module.exports.selectLocationsByCategory = (category, callback) => {
       callback(null, locations);
     }
   });
-}
+};
