@@ -45,15 +45,11 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectTreasuresByUsername('acreed1998', (err, res) => {
-  console.log(err, res);
-});
-
-// db.updateTreasureDateClaimed('3', (err, res) => {
+// db.selectTreasuresByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
 // });
 
-// db.updateTreasureTimeClaimed('3', (err, res) => {
+// db.updateTreasureDateClaimed('3', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -61,9 +57,9 @@ db.selectTreasuresByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
 // });
 
-// db.insertRiddle("It's literally right in front of you", -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', '1', (err, res) => {
-//   console.log(err, res);
-// });
+db.insertRiddle("It's literally right in front of you", -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 'Come at me bro \n and to you I will show \n riches that will make you king of the town \n lest fate bury you in the ground', '1', (err, res) => {
+  console.log(err, res);
+});
 
 // db.selectRiddleByTreasure('3', (err, res) => {
 //   console.log(err, res);

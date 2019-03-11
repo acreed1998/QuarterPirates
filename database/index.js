@@ -385,11 +385,23 @@ module.exports.selectTreasureByLocationId = (id_location, callback) => {
 };
 
 module.exports.selectTreasuresByZipcode = (zipcode, callback) => {
-  connection.query(`SELECT * FROM Treasures WHERE zipcode = ${parseInt(zipcode)}`, (err, treasures) => {
+  connection.query(`SELECT * FROM Locations WHERE zipcode = ${parseInt(zipcode)} AND category = 'treasure'`, (err, locations) => {
     if (err) {
       callback(err, null);
     } else {
-      callback(null, treasures);
+      const treasures = [];
+      _.forEach(locations, (location, index) => {
+        module.exports.selectTreasureByLocationId(location.id, (err2, treasure) => {
+          if (err2) {
+            callback(err2, null);
+          } else {
+            treasures.push(treasure);
+            if (index === locations.length - 1) {
+              callback(null, treasures);
+            }
+          }
+        });
+      });
     }
   });
 };
