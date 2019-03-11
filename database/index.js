@@ -271,25 +271,13 @@ module.exports.verifyUserPassword = (username, password, callback) => {
 // TREASURE RELATIVE HELPER FUNCIONS //
 
 module.exports.insertTreasure = (gold_value, longitude, latitude, address, city, state, zipcode, id_user, callback) => {
-  const q = [gold_value, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
-  connection.query('INSERT INTO Treasures (gold_value, longitude, latitude, address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+  const treasureValues = [gold_value];
+  const locationValues = [parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
+  connection.query("INSERT INTO Locations (category, longitude, latitude, address, city, state, zipcode) VALUES ('treasure', ?, ?, ?, ?, ?, ?)", locationValues, (err) => {
     if (err) {
       callback(err, null);
     } else {
-      module.exports.selectAllTreasure((err2, treasures) => {
-        if (err2) {
-          callback(err2, null);
-        } else {
-          const newTreasure = treasures[treasures.length - 1];
-          connection.query('INSERT INTO UserTreasures (id_user, id_treasure) VALUES (?, ?)', [id_user, newTreasure.id], (err3) => {
-            if (err3) {
-              callback(err3, null);
-            } else {
-              callback(null, newTreasure);
-            }
-          });
-        }
-      });
+
     }
   });
 };
@@ -587,3 +575,27 @@ module.exports.selectGoldTransactionsByUsername = (username, callback) => {
     }
   });
 };
+
+// END OF RIDDLE RELATIVE HELPER FUNCTIONS //
+
+// LOCATIONS HELPER FUNCTIONS //
+
+module.exports.selectAllLocations = (callback) => {
+  connection.query('SELECT * FROM Locations', (err, locations) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, locations);
+    }
+  });
+};
+
+module.exports.selectLocationsByCategory = (category, callback) => {
+  connection.query(`SELECT * FROM Locations WHERE category = '${category}'`, (err, locations) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, locations);
+    }
+  });
+}

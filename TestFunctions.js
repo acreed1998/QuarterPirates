@@ -9,11 +9,11 @@ const db = require('./database/index');
 //   console.log(err, user);
 // });
 
-// db.selectUserByUsername('austin', (err, user) => {
+// db.selectUserByUsername('acreed1998', (err, user) => {
 //   console.log(err, user);
 // });
 
-// db.selectUserById(1, (err, user) => {
+// db.selectUserById('1', (err, user) => {
 //   console.log(err, user);
 // });
 
@@ -29,7 +29,7 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.verifyUserPassword('acreed1998', 'tigerlamb345', (err, res) => {
+// db.verifyUserPassword('acreed1998', 'persona4dan', (err, res) => {
 //   console.log(err, res);
 // });
 
@@ -41,9 +41,9 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-// db.insertTreasure(1000, -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 1, (err, res) => {
-//   console.log(err, res);
-// });
+db.insertTreasure(1000, -90.093109, 29.929470, '1725 Delachaise St.', 'New Orleans', 'LA', '70115', 1, (err, res) => {
+  console.log(err, res);
+});
 
 // db.selectTreasuresByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
