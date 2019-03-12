@@ -618,6 +618,22 @@ module.exports.selectRiddleById = (id_riddle, callback) => {
   });
 };
 
+module.exports.deleteRiddle = (id_riddle, callback) => {
+  connection.query(`SELECT * FROM UserRiddles WHERE id_riddle = ${id_riddle}`, (err, pair) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectUserById(pair[0].id, (err2, user) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          
+        }
+      });
+    }
+  });
+};
+
 // END OF RIDDLE RELATIVE HELPER FUNCTIONS //
 
 // GOLD TRANSACTION HELPER FUNCTIONS //
@@ -741,6 +757,51 @@ module.exports.selectItemByName = (item_name, callback) => {
   });
 };
 
+module.exports.selectItemById = (id_item, callback) => {
+  connection.query(`SELECT * FROM Items WHERE id = ${id_item}`, (err, singleItemArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleItemArray[0]);
+    }
+  });
+};
+
 // END OF ITEMS RELATIVE HELPER FUNCTIONS //
+
+// UserInventory HELPER FUNCTION //
+
+module.exports.selectUserInventoryByUsername = (username, callback) => {
+  module.exports.selectRiddlesByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      connection.query(`SELECT * FROM UserInventory WHERE id_user = ${user.id}`, (err2, inventory) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          const itemIds = _.map(_.filter(inventory, (item) => { return item.category === 'item' }), item => item.id_item);
+          const riddleIds = _.map(_.filter(inventory, (riddle) => { return riddle.category === 'riddle' }), riddle => riddle.id_riddle);
+          const obj = {};
+          obj.items = [];
+          obj.riddles = [];
+          _.forEach(itemIds, (id) => {
+            module.exports.selectItemByName
+          });
+        }
+      });
+    }
+  });
+};
+
+module.exports.insertUserInventoryItem = (id_user, id_item, callback) => {
+
+};
+
+module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {
+  module.exports.selectUserInventoryByUsername
+};
 
 'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'
