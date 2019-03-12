@@ -772,7 +772,7 @@ module.exports.selectItemById = (id_item, callback) => {
 // UserInventory HELPER FUNCTION //
 
 module.exports.selectUserInventoryByUsername = (username, callback) => {
-  module.exports.selectRiddlesByUsername(username, (err, user) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
     } else if (!user) {
@@ -787,9 +787,50 @@ module.exports.selectUserInventoryByUsername = (username, callback) => {
           const obj = {};
           obj.items = [];
           obj.riddles = [];
-          _.forEach(itemIds, (id) => {
-            module.exports.selectItemByName
-          });
+          if (riddleIds.length !== 0) {
+            _.forEach(riddleIds, (id, index) => {
+              module.exports.selectRiddleById(id, (err3, riddle) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  obj.riddles.push(riddle);
+                  if (index === riddleIds.length - 1) {
+                    if (itemIds.length !== 0) {
+                      _.forEach(itemIds, (id, itemIndex) => {
+                        module.exports.selectItemById(id, (err3, item) => {
+                          if (err3) {
+                            callback(err3, null);
+                          } else {
+                            obj.items.push(item);
+                            if (itemIndex === itemIds.length - 1) {
+                              callback(null, obj);
+                            }
+                          }
+                        });
+                      });
+                    } else {
+                      callback(null, obj);
+                    }
+                  }
+                }
+              });
+            });
+          } else if (itemIds.length !== 0) {
+            _.forEach(itemIds, (id, itemIndex) => {
+              module.exports.selectItemById(id, (err3, item) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  obj.items.push(item);
+                  if (itemIndex === itemIds.length - 1) {
+                    callback(null, obj);
+                  }
+                }
+              });
+            });
+          } else {
+            callback(null, obj);
+          }
         }
       });
     }
@@ -801,7 +842,28 @@ module.exports.insertUserInventoryItem = (id_user, id_item, callback) => {
 };
 
 module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {
-  module.exports.selectUserInventoryByUsername
+  module.exports.selectUserById(parseInt(id_user), (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      const q = [parseInt(id_user), parseInt(id_riddle)];
+      connection.query("INSERT INTO UserInventory (category, id_user, id_riddle) VALUES ('riddle', ?, ?)", q, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectUserInventoryByUsername(user.username, (err3, inventory) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, inventory.riddles[inventory.riddles.length - 1]);
+            }
+          });
+        }
+      });
+    }
+  });
 };
 
 'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'

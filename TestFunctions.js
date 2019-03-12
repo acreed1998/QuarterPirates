@@ -88,3 +88,11 @@ const db = require('./database/index');
 // db.insertItem('Telescope', "Though ye' may not be seein' at night, with this ye' can have quite the far sight", (err, res) => {
 //   console.log(err, res);
 // });
+
+db.selectUserInventoryByUsername('acreed1998', (err, res) => {
+  console.log(err, res);
+});
+
+// db.insertUserInventoryRiddle('2', '1', (err, res) => {
+//   console.log(err, res);
+// });
