@@ -4,7 +4,9 @@
   "description": "The Pirate Game",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "./node_modules/react-viro/bin/run_ngrok.sh",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -29,6 +31,21 @@
     "jdenticon": "^2.1.1",
     "lodash": "^4.17.11",
     "mysql": "^2.16.0",
-    "path": "^0.12.7"
-  }
+    "path": "^0.12.7",
+    "react": "16.6.1",
+    "react-native": "0.57.7",
+    "react-viro": "2.13.0"
+  },
+    "devDependencies": {
+      "babel-jest": "24.4.0",
+      "jest": "24.4.0",
+      "metro-react-native-babel-preset": "0.53.0",
+      "react-test-renderer": "16.6.1"
+    },
+      "jest": {
+        "preset": "react-native"
+      }
 }
+
+
+
