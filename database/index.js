@@ -838,7 +838,28 @@ module.exports.selectUserInventoryByUsername = (username, callback) => {
 };
 
 module.exports.insertUserInventoryItem = (id_user, id_item, callback) => {
-
+  module.exports.selectUserById(parseInt(id_user), (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      const q = [parseInt(id_user), parseInt(id_item)];
+      connection.query("INSERT INTO UserInventory (category, id_user, id_item) VALUES ('item', ?, ?)", q, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectUserInventoryByUsername(user.username, (err3, inventory) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, inventory.items[inventory.items.length - 1]);
+            }
+          });
+        }
+      });
+    }
+  });
 };
 
 module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {

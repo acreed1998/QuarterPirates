@@ -96,3 +96,7 @@ db.selectUserInventoryByUsername('acreed1998', (err, res) => {
 // db.insertUserInventoryRiddle('2', '1', (err, res) => {
 //   console.log(err, res);
 // });
+
+// db.insertUserInventoryItem('2', '1', (err, res) => {
+//   console.log(err, res);
+// });
