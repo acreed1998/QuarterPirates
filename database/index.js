@@ -241,6 +241,8 @@ module.exports.verifyUserPassword = (username, password, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       if (user.password === crypto.pbkdf2Sync(password, user.salt, 1012, 50, 'sha512').toString('hex')) {
         const fileredUser = filterUserInfo(user)
@@ -337,6 +339,8 @@ module.exports.selectTreasuresByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       connection.query(`SELECT * FROM UserTreasures WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
@@ -416,22 +420,6 @@ module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
           callback(err2, null);
         } else {
           callback(null, updatedTreasure);
-        }
-      });
-    }
-  });
-};
-
-module.exports.deleteTreasureById = (id_treasure, callback) => {
-  connection.query(`DELETE FROM Treasures WHERE id = ${id_treasure}`, (err) => {
-    if (err) {
-      callback(err, null);
-    } else {
-      connection.query(`DELETE FROM Riddles WHERE id_treasure = ${id_treasure}`, (err2) => {
-        if (err2) {
-          callback(err2, null);
-        } else {
-          connection.query(`DELETE FROM UserTreasures`)
         }
       });
     }
@@ -519,6 +507,8 @@ module.exports.selectRiddlesByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       connection.query(`SELECT * FROM UserRiddles WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
@@ -628,6 +618,22 @@ module.exports.selectRiddleById = (id_riddle, callback) => {
   });
 };
 
+module.exports.deleteRiddle = (id_riddle, callback) => {
+  connection.query(`SELECT * FROM UserRiddles WHERE id_riddle = ${id_riddle}`, (err, pair) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      module.exports.selectUserById(pair[0].id, (err2, user) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          
+        }
+      });
+    }
+  });
+};
+
 // END OF RIDDLE RELATIVE HELPER FUNCTIONS //
 
 // GOLD TRANSACTION HELPER FUNCTIONS //
@@ -677,7 +683,7 @@ module.exports.selectGoldTransactionsByUsername = (username, callback) => {
   });
 };
 
-// END OF RIDDLE RELATIVE HELPER FUNCTIONS //
+// END OF GOLD TRANSACTION RELATIVE HELPER FUNCTIONS //
 
 // LOCATIONS HELPER FUNCTIONS //
 
@@ -700,3 +706,187 @@ module.exports.selectLocationsByCategory = (category, callback) => {
     }
   });
 };
+
+module.exports.insertLocation = (category, longitude, latitude, address, city, state, zipcode, callback) => {
+  const q = [category, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
+  connection.query('INSERT INTO Locations (category, longitude, latitude, address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null);
+    }
+  })
+};
+
+// END OF LOCATION RELATIVE HELPER FUNCTIONS //
+
+// ITEMS HELPER FUNCTIONS //
+
+module.exports.insertItem = (name, description, callback) => {
+  module.exports.selectItemByName(name, (err, item) => {
+    if (err) {
+      callback(err, null);
+    } else if (item) {
+      callback(Error('Item Already Exists!'), item);
+    } else {
+      const q = [name, description];
+      connection.query('INSERT INTO Items (name, description) VALUES (?, ?)', q, (err) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          module.exports.selectItemByName(name, (err2, insertedItem) => {
+            if (err2) {
+              callback(err2, null);
+            } else {
+              callback(null, insertedItem);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+module.exports.selectItemByName = (item_name, callback) => {
+  connection.query(`SELECT * FROM Items WHERE name = '${item_name}'`, (err, singleItemArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleItemArray[0]);
+    }
+  });
+};
+
+module.exports.selectItemById = (id_item, callback) => {
+  connection.query(`SELECT * FROM Items WHERE id = ${id_item}`, (err, singleItemArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleItemArray[0]);
+    }
+  });
+};
+
+// END OF ITEMS RELATIVE HELPER FUNCTIONS //
+
+// USERINVENTORY HELPER FUNCTION //
+
+module.exports.selectUserInventoryByUsername = (username, callback) => {
+  module.exports.selectUserByUsername(username, (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      connection.query(`SELECT * FROM UserInventory WHERE id_user = ${user.id}`, (err2, inventory) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          const itemIds = _.map(_.filter(inventory, (item) => { return item.category === 'item' }), item => item.id_item);
+          const riddleIds = _.map(_.filter(inventory, (riddle) => { return riddle.category === 'riddle' }), riddle => riddle.id_riddle);
+          const obj = {};
+          obj.items = [];
+          obj.riddles = [];
+          if (riddleIds.length !== 0) {
+            _.forEach(riddleIds, (id, index) => {
+              module.exports.selectRiddleById(id, (err3, riddle) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  obj.riddles.push(riddle);
+                  if (index === riddleIds.length - 1) {
+                    if (itemIds.length !== 0) {
+                      _.forEach(itemIds, (id, itemIndex) => {
+                        module.exports.selectItemById(id, (err3, item) => {
+                          if (err3) {
+                            callback(err3, null);
+                          } else {
+                            obj.items.push(item);
+                            if (itemIndex === itemIds.length - 1) {
+                              callback(null, obj);
+                            }
+                          }
+                        });
+                      });
+                    } else {
+                      callback(null, obj);
+                    }
+                  }
+                }
+              });
+            });
+          } else if (itemIds.length !== 0) {
+            _.forEach(itemIds, (id, itemIndex) => {
+              module.exports.selectItemById(id, (err3, item) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  obj.items.push(item);
+                  if (itemIndex === itemIds.length - 1) {
+                    callback(null, obj);
+                  }
+                }
+              });
+            });
+          } else {
+            callback(null, obj);
+          }
+        }
+      });
+    }
+  });
+};
+
+module.exports.insertUserInventoryItem = (id_user, id_item, callback) => {
+  module.exports.selectUserById(parseInt(id_user), (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      const q = [parseInt(id_user), parseInt(id_item)];
+      connection.query("INSERT INTO UserInventory (category, id_user, id_item) VALUES ('item', ?, ?)", q, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectUserInventoryByUsername(user.username, (err3, inventory) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, inventory.items[inventory.items.length - 1]);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {
+  module.exports.selectUserById(parseInt(id_user), (err, user) => {
+    if (err) {
+      callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
+    } else {
+      const q = [parseInt(id_user), parseInt(id_riddle)];
+      connection.query("INSERT INTO UserInventory (category, id_user, id_riddle) VALUES ('riddle', ?, ?)", q, (err2) => {
+        if (err2) {
+          callback(err2, null);
+        } else {
+          module.exports.selectUserInventoryByUsername(user.username, (err3, inventory) => {
+            if (err3) {
+              callback(err3, null);
+            } else {
+              callback(null, inventory.riddles[inventory.riddles.length - 1]);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+// END OF USERINVENTORY RELATIV HELPER FUNCTIONS //
+
+'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'

@@ -20,6 +20,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Needed for React at Some Point // 
 // app.use(express.static(path.join(__dirname, [REACT DIRECTORY])));
 
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
 // Able to set port and still work //
 const port = process.env.PORT || 3001;
 
