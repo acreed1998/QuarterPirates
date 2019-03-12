@@ -769,7 +769,7 @@ module.exports.selectItemById = (id_item, callback) => {
 
 // END OF ITEMS RELATIVE HELPER FUNCTIONS //
 
-// UserInventory HELPER FUNCTION //
+// USERINVENTORY HELPER FUNCTION //
 
 module.exports.selectUserInventoryByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
@@ -886,5 +886,7 @@ module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {
     }
   });
 };
+
+// END OF USERINVENTORY RELATIV HELPER FUNCTIONS //
 
 'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'

@@ -89,9 +89,9 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.selectUserInventoryByUsername('acreed1998', (err, res) => {
-  console.log(err, res);
-});
+// db.selectUserInventoryByUsername('acreed1998', (err, res) => {
+//   console.log(err, res);
+// });
 
 // db.insertUserInventoryRiddle('2', '1', (err, res) => {
 //   console.log(err, res);
