@@ -241,6 +241,8 @@ module.exports.verifyUserPassword = (username, password, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       if (user.password === crypto.pbkdf2Sync(password, user.salt, 1012, 50, 'sha512').toString('hex')) {
         const fileredUser = filterUserInfo(user)
@@ -337,6 +339,8 @@ module.exports.selectTreasuresByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       connection.query(`SELECT * FROM UserTreasures WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
@@ -503,6 +507,8 @@ module.exports.selectRiddlesByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
+    } else if (!user) {
+      callback(Error('User does not exist!'), null);
     } else {
       connection.query(`SELECT * FROM UserRiddles WHERE id_user = ${user.id}`, (err2, pairs) => {
         if (err2) {
@@ -736,3 +742,5 @@ module.exports.selectItemByName = (item_name, callback) => {
 };
 
 // END OF ITEMS RELATIVE HELPER FUNCTIONS //
+
+'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'
