@@ -24,6 +24,10 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+app.get('/health', (req, res) => {
+  res.send('UP!');
+});
+
 // Able to set port and still work //
 const port = process.env.PORT || 3001;
 

@@ -15,7 +15,7 @@ let options = {};
 let avatars = new Avatars(sprites(options));
 // Create connection to the database //
 const connection = mysql.createConnection({
-  // host: process.env.DB_HOST,
+  host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
@@ -619,17 +619,11 @@ module.exports.selectRiddleById = (id_riddle, callback) => {
 };
 
 module.exports.deleteRiddle = (id_riddle, callback) => {
-  connection.query(`SELECT * FROM UserRiddles WHERE id_riddle = ${id_riddle}`, (err, pair) => {
+  module.exports.selectRiddleById(parseInt(id_riddle), (err, riddle) => {
     if (err) {
       callback(err, null);
     } else {
-      module.exports.selectUserById(pair[0].id, (err2, user) => {
-        if (err2) {
-          callback(err2, null);
-        } else {
-          
-        }
-      });
+      connection.query(`DELETE Riddles, UserRiddles, RiddleViewers, UserInventory`)
     }
   });
 };
@@ -716,6 +710,16 @@ module.exports.insertLocation = (category, longitude, latitude, address, city, s
       callback(null);
     }
   })
+};
+
+module.exports.deleteLocation = (id_location, callback) => {
+  connection.query(`DELETE FROM Locations WHERE id = ${id_location}`, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null);
+    }
+  });
 };
 
 // END OF LOCATION RELATIVE HELPER FUNCTIONS //
