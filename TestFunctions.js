@@ -80,3 +80,11 @@ const db = require('./database/index');
 // db.selectGoldTransactionsByUsername('acreed1998', (err, res) => {
 //   console.log(err, res);
 // });
+
+// db.insertLocation('riddle', '4.20', '4.20', '1725 Delachaise St.', 'New York', 'REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE', '42069', (err, res) => {
+//   console.log(err, res);
+// });
+
+// db.insertItem('Telescope', "Though ye' may not be seein' at night, with this ye' can have quite the far sight", (err, res) => {
+//   console.log(err, res);
+// });

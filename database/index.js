@@ -422,22 +422,6 @@ module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
   });
 };
 
-module.exports.deleteTreasureById = (id_treasure, callback) => {
-  connection.query(`DELETE FROM Treasures WHERE id = ${id_treasure}`, (err) => {
-    if (err) {
-      callback(err, null);
-    } else {
-      connection.query(`DELETE FROM Riddles WHERE id_treasure = ${id_treasure}`, (err2) => {
-        if (err2) {
-          callback(err2, null);
-        } else {
-          connection.query(`DELETE FROM UserTreasures`)
-        }
-      });
-    }
-  });
-};
-
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //
 
 // RIDDLE RELATIVE HELPER FUNCTIONS //
@@ -677,7 +661,7 @@ module.exports.selectGoldTransactionsByUsername = (username, callback) => {
   });
 };
 
-// END OF RIDDLE RELATIVE HELPER FUNCTIONS //
+// END OF GOLD TRANSACTION RELATIVE HELPER FUNCTIONS //
 
 // LOCATIONS HELPER FUNCTIONS //
 
@@ -700,3 +684,55 @@ module.exports.selectLocationsByCategory = (category, callback) => {
     }
   });
 };
+
+module.exports.insertLocation = (category, longitude, latitude, address, city, state, zipcode, callback) => {
+  const q = [category, parseFloat(longitude), parseFloat(latitude), address, city, state, parseInt(zipcode)];
+  connection.query('INSERT INTO Locations (category, longitude, latitude, address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?)', q, (err) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null);
+    }
+  })
+};
+
+// END OF LOCATION RELATIVE HELPER FUNCTIONS //
+
+// ITEMS HELPER FUNCTIONS //
+
+module.exports.insertItem = (name, description, callback) => {
+  module.exports.selectItemByName(name, (err, item) => {
+    if (err) {
+      callback(err, null);
+    } else if (item) {
+      callback(Error('Item Already Exists!'), item);
+    } else {
+      const q = [name, description];
+      connection.query('INSERT INTO Items (name, description) VALUES (?, ?)', q, (err) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          module.exports.selectItemByName(name, (err2, insertedItem) => {
+            if (err2) {
+              callback(err2, null);
+            } else {
+              callback(null, insertedItem);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+module.exports.selectItemByName = (item_name, callback) => {
+  connection.query(`SELECT * FROM Items WHERE name = '${item_name}'`, (err, singleItemArray) => {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, singleItemArray[0]);
+    }
+  });
+};
+
+// END OF ITEMS RELATIVE HELPER FUNCTIONS //
