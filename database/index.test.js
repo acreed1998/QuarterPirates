@@ -8,3 +8,11 @@ test('db.insertUser', (done) => {
   });
 });
 
+test('db.selectAllUsers', (done) => {
+  db.connection.query('SELECT * FROM Users', (err, users) => {
+    db.selectAllUsers((err2, theUsers) => {
+      expect(users.length).toBe(theUsers.length);
+      done();
+    });
+  });
+});
