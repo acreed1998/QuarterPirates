@@ -135,11 +135,11 @@ module.exports.selectUserById = (id_user, callback) => {
   })
 };
 
-/* 
-user and password are objects
-user needs either a useranme or id_user key
-password needs an oldPassword and newPassword key
-*/
+/**
+ * @param {Object} user requires either a id_user or username key
+ * @param {Object} password requires a oldPassword AND newPassword key
+ * @param {Function} callback
+ */
 module.exports.updateUserPassword = (user, password, callback) => {
   if (user.username) {
     module.exports.selectUserByUsername(user.username, (err, user) => {
@@ -426,6 +426,34 @@ module.exports.updateTreasureDateClaimed = (id_treasure, callback) => {
   });
 };
 
+module.exports.deleteTreasure = (id_user, id_treasure, callback) => {
+  module.exports.selectTreasureById(id_treasure, (err, treasure) => {
+    if (!treasure) {
+      callback(Error("treasure doesn't exist"), null);
+    } else {
+      module.exports.selectUserById(id_user, (err, user) => {
+        if (err) {
+          callback(err, null);
+        } else {
+          module.exports.selectRiddlesByUsername(user.username, (err2, riddles) => {
+            if (err2) {
+              callback(err2, null);
+            } else {
+              const treasureRiddleId = _.map(_.filter(riddles, riddles => riddles.id_treasure === id_treasure), riddle => riddle.id_treasure);
+              _.forEach(treasureRiddleId, (id) => {
+                module.exports.deleteRiddle(id, () => { console.log('error'); });
+              });
+              connection.query(`DELETE FROM UserTreasures WHERE id_treasure = ${id_treasure}`);
+              connection.query(`DELETE FROM Locations WHERE id = ${treasure.id_location}`);
+              connection.query(`DELETE FROM Treasures WHERE id = ${id_treasure}`);
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
 // END OF TREASURE RELATIVE HELPER FUNCTIONS //
 
 // RIDDLE RELATIVE HELPER FUNCTIONS //
@@ -516,18 +544,22 @@ module.exports.selectRiddlesByUsername = (username, callback) => {
         } else {
           const riddles = [];
           const ids = _.map(pairs, pair => pair.id_riddle);
-          _.forEach(ids, (id, index) => {
-            module.exports.selectRiddleById(id, (err3, riddle) => {
-              if (err3) {
-                callback(err3, null);
-              } else {
-                riddles.push(riddle);
-                if (index === ids.length - 1) {
-                  callback(null, riddles);
+          if (ids.length !== 0) {
+            _.forEach(ids, (id, index) => {
+              module.exports.selectRiddleById(id, (err3, riddle) => {
+                if (err3) {
+                  callback(err3, null);
+                } else {
+                  riddles.push(riddle);
+                  if (index === ids.length - 1) {
+                    callback(null, riddles);
+                  }
                 }
-              }
-            })
-          });
+              })
+            });
+          } else {
+            callback(null, riddles);
+          }
         }
       });
     }
@@ -623,7 +655,12 @@ module.exports.deleteRiddle = (id_riddle, callback) => {
     if (err) {
       callback(err, null);
     } else {
-      connection.query(`DELETE Riddles, UserRiddles, RiddleViewers, UserInventory`)
+      connection.query(`DELETE FROM UserInventory WHERE id_riddle = ${id_riddle}`);
+      connection.query(`DELETE FROM RiddleViewers WHERE id_riddle = ${id_riddle}`);
+      connection.query(`DELETE FROM UserRiddles WHERE id_riddle = ${id_riddle}`);
+      connection.query(`DELETE FROM UserInventory WHERE id = ${id_riddle}`);
+      connection.query(`DELETE FROM Locations WHERE id = ${riddle.id_location}`);
+      connection.query(`DELETE FROM Riddles WHERE id = ${id_riddle}`);
     }
   });
 };
@@ -893,4 +930,3 @@ module.exports.insertUserInventoryRiddle = (id_user, id_riddle, callback) => {
 
 // END OF USERINVENTORY RELATIV HELPER FUNCTIONS //
 
-'DELETE Users, GoldTransactions From Users INNER JOIN GoldTransactions ON Users.id = GoldTransactions.id_user WHERE Users.id = 1'
