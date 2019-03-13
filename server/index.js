@@ -29,6 +29,26 @@ app.get('/health', (req, res) => {
 });
 
 /**
+ * Log-In User
+ * @requires req.body.username - a username
+ * @requires req.body.password = a password
+ * Sends Back User Info
+ */
+app.get('/login', (req, res) => {
+  if (req.query.username.length === 0 || req.query.password.length === 0) {
+    res.status(404).send('Invalid Username or Pasword Entry');
+  } else {
+    db.verifyUserPassword(req.query.username, req.query.password, (err, user) => {
+      if (err) {
+        res.status(500).send('COULD NOT LOG IN USER');
+      } else {
+        res.status(202).send(user);
+      }
+    });
+  }
+});
+
+/**
  * @requires req.body.username - a username
  * @requires req.body.password - a password
  */
@@ -44,6 +64,21 @@ app.post('/signup', (req, res) => {
       }
     });
   }
+});
+
+app.patch('/user/gold', (req, res) => {
+  db.updateUserGold(req.body.username, req.body.ammount, (err, user) => {
+    if (err) {
+      res.status(500).send('UNABLE TO UPDATE USER GOLD');
+    } else {
+      db.insertGoldTransaction(user.id, req.body.ammount, (err2, res) => {
+        if (!err2) {
+          console.log('Transaction Complete!');
+        }
+      });
+      res.status(202).send(user);
+    }
+  });
 });
 
 // Able to set port and still work //

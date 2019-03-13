@@ -1,5 +1,10 @@
+const _ = require('./index');
 const db = require('./index');
 
-test('true', () => {
-  expect(true).toBe(true);
+test('db.insertUser', (done) => {
+  db.insertUser('john', 'doe', (err, user) => {
+    expect(typeof user).toBe('object');
+    done();
+  });
 });
+

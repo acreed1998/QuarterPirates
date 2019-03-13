@@ -208,6 +208,9 @@ module.exports.updateUserPassword = (user, password, callback) => {
 };
 
 module.exports.updateUserGold = (username, amount, callback) => {
+  if (parseInt(amount) < 0) {
+
+  }
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
       callback(err, null);
