@@ -105,6 +105,6 @@ const db = require('./database/index');
 //   console.log(err, res);
 // });
 
-db.deleteTreasure(1, 2, (err, res) => {
+// db.deleteTreasure(1, 2, (err, res) => {
 
-});
+// });

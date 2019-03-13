@@ -20,7 +20,7 @@
 
 ## Usage
 
-> Some usage instructions
+> Fork and clone down the repo, nom install, run the server, hope for the best.
 
 ## Requirements
 

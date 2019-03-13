@@ -32,9 +32,6 @@
     "jdenticon": "^2.1.1",
     "lodash": "^4.17.11",
     "mysql": "^2.16.0",
-<<<<<<< HEAD
-    "path": "^0.12.7"
-=======
     "path": "^0.12.7",
     "react": "16.6.1",
     "react-native": "0.57.7",
@@ -47,7 +44,5 @@
     "react-test-renderer": "16.6.1"
   },
   "jest": {
-    "preset": "react-native"
->>>>>>> b94cde9cd65a2defe8889013f12e8a40a7aefd51
   }
 }
