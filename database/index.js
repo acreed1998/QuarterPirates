@@ -4,7 +4,6 @@
 
 const mysql = require('mysql');
 const crypto = require('crypto');
-const axios = require('axios');
 const _ = require('lodash');
 const Avatars = require('@dicebear/avatars').default;
 const sprites = require('@dicebear/avatars-jdenticon-sprites').default;
@@ -34,6 +33,10 @@ module.exports.connection = connection;
 
 // USER RELATIVE HELPER FUNCTIONS //
 
+/**
+ * @param {object} user - A user object containing vital user info
+ * @returns {object} A filtered user onject
+ */
 const filterUserInfo = (user) => {
   const obj = {};
   const filters = ['password', 'salt'];
@@ -45,6 +48,10 @@ const filterUserInfo = (user) => {
   return obj;
 };
 
+/**
+ * @param {string} username - A user's name in the form of a string
+ * @param {Function} callback - A function to be executed on the error (if exists) or the user object
+ */
 module.exports.selectFilteredUserInfoByUsername = (username, callback) => {
   module.exports.selectUserByUsername(username, (err, user) => {
     if (err) {
@@ -72,6 +79,11 @@ module.exports.selectFilteredUserInfoByUsername = (username, callback) => {
   });
 };
 
+/**
+ * @param {string} username - A user's username in the form of a string
+ * @param {string} password - A user's password in the from of a string
+ * @param {Function} callback - A function to be executed on the new user
+ */
 module.exports.insertUser = (username, password, callback) => {
   module.exports.selectAllUsers((err, users) => {
     if (err) {
@@ -104,6 +116,7 @@ module.exports.insertUser = (username, password, callback) => {
     }
   });
 };
+
 
 module.exports.selectAllUsers = (callback) => {
   connection.query('SELECT * FROM Users', (err, users) => {

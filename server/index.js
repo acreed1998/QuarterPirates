@@ -28,6 +28,24 @@ app.get('/health', (req, res) => {
   res.send('UP!');
 });
 
+/**
+ * @requires req.body.username - a username
+ * @requires req.body.password - a password
+ */
+app.post('/signup', (req, res) => {
+  if (req.body.username.length === 0 || req.body.password.length === 0) {
+    res.status(404).send('Invalid Username or Pasword Entry');
+  } else {
+    db.insertUser(req.body.username, req.body.password, (err, user) => {
+      if (err) {
+        res.status(500).send('COULD NOT SIGN UP USER');
+      } else {
+        res.status(202).send(user);
+      }
+    });
+  }
+});
+
 // Able to set port and still work //
 const port = process.env.PORT || 3001;
 
