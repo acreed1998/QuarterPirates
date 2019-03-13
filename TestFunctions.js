@@ -100,3 +100,11 @@ const db = require('./database/index');
 // db.insertUserInventoryItem('2', '1', (err, res) => {
 //   console.log(err, res);
 // });
+
+// db.deleteRiddle(1, (err, res) => {
+//   console.log(err, res);
+// });
+
+db.deleteTreasure(1, 2, (err, res) => {
+
+});
